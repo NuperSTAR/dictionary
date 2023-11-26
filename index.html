@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dictionary App</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', 'Arial', sans-serif;
+            background-color: #f0f0f3;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: auto;
+        }
+
+        .container {
+            max-width: 700px;
+            width: 90%;
+            text-align: center;
+            background-color: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .search-box {
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: center;
+        }
+
+        #wordInput {
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            width: 70%;
+            margin-right: 10px;
+            transition: border 0.3s ease;
+            font-size: 16px;
+        }
+
+        #wordInput:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+
+        #searchButton {
+            padding: 12px 20px;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            font-size: 16px;
+        }
+
+        #searchButton:hover {
+            background-color: #0056b3;
+        }
+
+        #definitionDisplay p {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            line-height: 1.6;
+            text-align: left;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        @media (max-width: 600px) {
+            #wordInput, #searchButton {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+            .search-box {
+                flex-direction: column;
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Dictionary App</h1>
+        <div class="search-box">
+            <input type="text" id="wordInput" placeholder="Enter a word">
+            <button id="searchButton">Search</button>
+        </div>
+        <div id="definitionDisplay"></div>
+    </div>
+    
+    <script>
+                document.getElementById('searchButton').addEventListener('click', function() {
+    var word = document.getElementById('wordInput').value;
+    fetch('https://api.dictionaryapi.dev/api/v2/entries/en/' + word)
+        .then(response => response.json())
+        .then(data => {
+            displayDefinition(data);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+});
+
+function displayDefinition(data) {
+    var displayArea = document.getElementById('definitionDisplay');
+    displayArea.innerHTML = '';
+
+    if (data && data.length > 0 && data[0].meanings.length > 0) {
+        data[0].meanings.forEach(meaning => {
+            meaning.definitions.forEach(def => {
+                var p = document.createElement('p');
+                p.innerText = def.definition;
+                displayArea.appendChild(p);
+            });
+        });
+    } else {
+        displayArea.innerHTML = 'Definition not found';
+    }
+}
+   </script>
+</body>
+</html>
